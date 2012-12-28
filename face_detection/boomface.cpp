@@ -1,14 +1,3 @@
-// DetectFaces.c
-//
-// Example code showing how to detect faces using
-// OpenCV's CvHaarClassifierCascade
-//
-// See also, facedetect.c, in the samples directory.
-//
-// Usage: DetectFaces <imagefilename>
-
-
-
 #include "opencv/cv.h"
 #include "opencv/highgui.h"
 
@@ -26,24 +15,21 @@ using namespace cv;
 
 const char * DISPLAY_WINDOW = "Unleashed Corporation";
 
-void displayDetections(IplImage * frame, CvSeq * face);
-IplImage *marker = cvLoadImage("C:/damn.jpg");    /* load marker */
+IplImage *marker = cvLoadImage("C:/mask.png");    /* load marker */
+IplImage *frame;
+CvRect* r;
 CvRect rect;
+
+CvHaarClassifierCascade * pCascade = 0;		// the face detector
+CvMemStorage * pStorage = 0;				// memory for detector to use
+CvSeq * face;								// memory-access interface	
+
+void overlayImages(CvPoint point, IplImage * frame);
+void displayDetections(IplImage * frame, CvSeq * face);
 
 int main(int argc, char** argv)
 {
-	//// variables
-	//IplImage * frame = cvLoadImage("D:/Unleashed/Downloads/Pictures/kinool.jpg");
 	CvCapture *capture = cvCaptureFromCAM(0);
-	CvHaarClassifierCascade * pCascade = 0;  // the face detector
-	CvMemStorage * pStorage = 0;        // memory for detector to use
-	CvSeq * face;               // memory-access interface
-	IplImage *frame;
-	
-	
-	//IplImage *mark = cvCreateImage(cvGetSize(marker), 8, 1);
-
-	
 
 	/* usage check
 	if(argc < 2)
@@ -55,6 +41,7 @@ int main(int argc, char** argv)
 
 	// initializations
 	//frame = (argc > 1) ? cvLoadImage(argv[1], CV_LOAD_IMAGE_COLOR) : 0;
+
 	pStorage = cvCreateMemStorage(0);
 	pCascade = (CvHaarClassifierCascade *)cvLoad
 	   ((OPENCV_ROOT"/data/haarcascades/haarcascade_frontalface_default.xml"),
@@ -71,43 +58,31 @@ int main(int argc, char** argv)
 		exit(-1);
 	}
 
-	
-	
 	// create a window to display detected faces
 	cvNamedWindow(DISPLAY_WINDOW, CV_WINDOW_AUTOSIZE);
-	//cvResizeWindow(DISPLAY_WINDOW, 800, 640);
-
-	//cvThreshold(marker, marker, 0.9, 12, CV_THRESH_BINARY);
 
 	// Show the image captured from the camera in the window and repeat
 	while(1) {
 
 		frame = cvQueryFrame( capture );
-		//IplImage * okeh = cvCreateImage(cvGetSize(frame), frame->depth, 1);
-		//cvCvtColor(frame, okeh, CV_RGB2GRAY);
-
-		
-		
 
 		// detect faces in image
 		face = cvHaarDetectObjects
 			(frame, pCascade, pStorage,
-			1.4,                       // increase search scale by 10% each pass
-			3,                         // merge groups of three detections
-			CV_HAAR_DO_CANNY_PRUNING,  // skip regions unlikely to contain a face
-			cvSize(50,50));          // smallest size face to detect = 40x40
+			1.4,						// increase search scale by 10% each pass
+			3,							// merge groups of three detections
+			CV_HAAR_DO_CANNY_PRUNING,	// skip regions unlikely to contain a face
+			cvSize(50,50));				// smallest size face to detect = 40x40
 
 		displayDetections(frame, face);
 
 		cvShowImage(DISPLAY_WINDOW, frame);
+
 		if ( (cvWaitKey(10) & 255) == 27 ) break;
 
 	}
 
-
 	// clean up and release resources
-	//cvReleaseImage(&frame);
-
 	cvReleaseCapture(&capture);
 	if(pCascade) cvReleaseHaarClassifierCascade(&pCascade);
 	if(pStorage) cvReleaseMemStorage(&pStorage);
@@ -125,7 +100,7 @@ void displayDetections(IplImage * frame, CvSeq * face)
 	for(i=0;i<(face? face->total:0); i++ )
 	{
 		int total = face->total;
-		CvRect* r = (CvRect*)cvGetSeqElem(face, i);
+		r = (CvRect*)cvGetSeqElem(face, i);
 		
 		CvPoint pt1 = { r->x, r->y };
 		CvPoint pt2 = { r->x + r->width, r->y + r->height };
@@ -136,20 +111,24 @@ void displayDetections(IplImage * frame, CvSeq * face)
 		cvInitFont(&font, CV_FONT_HERSHEY_COMPLEX, 1.0, 1.0, 0, 1, CV_AA);
 		cvPutText(frame, "Keur Ngaca Lur! ", pt1, &font, cvScalar(255, 255, 255, 0));
 
-		//* define rectangle for ROI */-
-		//rect = cvRect(r->x, r->y,marker->width, marker->height);
-
-		///* sets Region of Interest */
-		//cvSetImageROI(frame, rect);
-
-		///* Add both images
-		//cvAddWeighted(marker,1, frame, 0, 0, frame);
-
-		///* always reset the region of interest */
-		//cvResetImageROI(frame);
-		
+		overlayImages(pt1, frame);
 	}	
 
 		
 	
+}
+
+void overlayImages(CvPoint point, IplImage * frame)
+{
+		/* define rectangle for ROI */
+		rect = cvRect(point.x, point.y,marker->width, marker->height);
+
+		/* sets Region of Interest */
+		cvSetImageROI(frame, rect);
+
+		/* Add masked images */
+		cvAddWeighted(marker,1, frame, 0, 0, frame);
+
+		/* always reset the region of interest */
+		cvResetImageROI(frame);
 }
