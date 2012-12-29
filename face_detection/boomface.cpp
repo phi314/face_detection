@@ -18,7 +18,7 @@ const char * DISPLAY_WINDOW = "Unleashed Corporation";
 IplImage *marker = cvLoadImage("C:/mask.png");    /* load marker */
 IplImage *frame;
 CvRect* r;
-CvRect rect;
+CvRect rect; //ntes
 
 CvHaarClassifierCascade * pCascade = 0;		// the face detector
 CvMemStorage * pStorage = 0;				// memory for detector to use
