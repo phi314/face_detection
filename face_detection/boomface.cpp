@@ -69,7 +69,7 @@ int main(int argc, char** argv)
 		// detect faces in image
 		face = cvHaarDetectObjects
 			(frame, pCascade, pStorage,
-			1.4,						// increase search scale by 10% each pass
+			1.2,						// increase search scale by 10% each pass
 			3,							// merge groups of three detections
 			CV_HAAR_DO_CANNY_PRUNING,	// skip regions unlikely to contain a face
 			cvSize(50,50));				// smallest size face to detect = 40x40
@@ -112,23 +112,25 @@ void displayDetections(IplImage * frame, CvSeq * face)
 		cvPutText(frame, "Keur Ngaca Lur! ", pt1, &font, cvScalar(255, 255, 255, 0));
 
 		overlayImages(pt1, frame);
+
 	}	
 
 		
 	
 }
 
+//ieu pitur nambah wajah
 void overlayImages(CvPoint point, IplImage * frame)
 {
 		/* define rectangle for ROI */
-		rect = cvRect(point.x, point.y,marker->width, marker->height);
+		//rect = cvRect(point.x, point.y,marker->width, marker->height);
 
 		/* sets Region of Interest */
-		cvSetImageROI(frame, rect);
+		//cvSetImageROI(frame, rect);
 
 		/* Add masked images */
-		cvAddWeighted(marker,1, frame, 0, 0, frame);
+		//cvAddWeighted(marker,1, frame, 0, 0, frame);
 
 		/* always reset the region of interest */
-		cvResetImageROI(frame);
+		//cvResetImageROI(frame);
 }
