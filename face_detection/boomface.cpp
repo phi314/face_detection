@@ -119,7 +119,7 @@ void displayDetections(IplImage * frame, CvSeq * face)
 	
 }
 
-//iron man jadi2an cuy
+//ieu pitur nambah wajah ini acok
 void overlayImages(CvPoint point, IplImage * frame)
 {
 		/* define rectangle for ROI */
