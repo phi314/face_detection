@@ -119,7 +119,7 @@ void displayDetections(IplImage * frame, CvSeq * face)
 	
 }
 
-//ieu pitur nambah wajah ini acok
+//ini buat ngassih gambar tapi masih terjadi error nih
 void overlayImages(CvPoint point, IplImage * frame)
 {
 		/* define rectangle for ROI */
