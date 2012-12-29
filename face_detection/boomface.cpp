@@ -5,7 +5,7 @@
 #include <iostream>
 
 
-// *** Change this to your install location! ***
+// *** ervand rayina ***
 // *********************************************
 #define OPENCV_ROOT  "C:/OpenCV/opencv"
 // *********************************************
