@@ -63,7 +63,7 @@ int main(int argc, char** argv)
 
 	// Show the image captured from the camera in the window and repeat
 	while(1) {
-
+		// get frame per second
 		frame = cvQueryFrame( capture );
 
 		// detect faces in image
@@ -73,11 +73,14 @@ int main(int argc, char** argv)
 			3,							// merge groups of three detections
 			CV_HAAR_DO_CANNY_PRUNING,	// skip regions unlikely to contain a face
 			cvSize(50,50));				// smallest size face to detect = 40x40
-
+		
+		// run void displaydetections
 		displayDetections(frame, face);
-
+		
+		// show processed image
 		cvShowImage(DISPLAY_WINDOW, frame);
-
+		
+		// 27 = esc button
 		if ( (cvWaitKey(10) & 255) == 27 ) break;
 
 	}
@@ -106,14 +109,24 @@ void displayDetections(IplImage * frame, CvSeq * face)
 		CvPoint pt2 = { r->x + r->width, r->y + r->height };
 		cvRectangle(frame, pt1, pt2, CV_RGB(0,255,0), 3, 4, 0);
 		
+		/*
+		 * sintax untuk menghitung jumlah wajah
+		 */
+		 
+		 
+		 
+		// end menghitung wajah
+		
 		CvFont font;
-
 		cvInitFont(&font, CV_FONT_HERSHEY_COMPLEX, 1.0, 1.0, 0, 1, CV_AA);
 		cvPutText(frame, "Keur Ngaca Lur! ", pt1, &font, cvScalar(255, 255, 255, 0));
+		
+		// masih error ganti wajah
+		//overlayImages(pt1, frame);
 
-		overlayImages(pt1, frame);
-
-	}	
+	}
+	
+	// keluarkan dan tampilkan jumlah wajah
 
 		
 	
