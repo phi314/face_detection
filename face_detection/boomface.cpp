@@ -132,7 +132,7 @@ void displayDetections(IplImage * frame, CvSeq * face)
 	
 }
 
-//ini buat ngassih gambar tapi masih terjadi error nih
+//ini buat ngassih gambar "iron man" tapi masih terjadi error nih
 void overlayImages(CvPoint point, IplImage * frame)
 {
 		/* define rectangle for ROI */
