@@ -4,7 +4,6 @@
 #include <stdio.h>
 #include <iostream>
 
-
 // *** Change this to your install location! ***
 // *********************************************
 #define OPENCV_ROOT  "C:/OpenCV/opencv"
@@ -18,29 +17,22 @@ const char * DISPLAY_WINDOW = "Unleashed Corporation";
 IplImage *marker = cvLoadImage("C:/mask.png");    /* load marker */
 IplImage *frame;
 CvRect* r;
-CvRect rect; //ntes
+CvRect rect;
+
+double elapsed;
+int last_time;
+int num_frames;
 
 CvHaarClassifierCascade * pCascade = 0;		// the face detector
 CvMemStorage * pStorage = 0;				// memory for detector to use
 CvSeq * face;								// memory-access interface	
 
-void overlayImages(CvPoint point, IplImage * frame);
-void displayDetections(IplImage * frame, CvSeq * face);
+void overlayImages(CvRect * point, IplImage * frame);
+void detect_face(IplImage * frame, CvSeq * face);
 
 int main(int argc, char** argv)
 {
 	CvCapture *capture = cvCaptureFromCAM(0);
-
-	/* usage check
-	if(argc < 2)
-	{
-		printf("Missing name of image file!\n"
-		       "Usage: %s <imagefilename>\n", argv[0]);
-		exit(-1);
-	}*/
-
-	// initializations
-	//frame = (argc > 1) ? cvLoadImage(argv[1], CV_LOAD_IMAGE_COLOR) : 0;
 
 	pStorage = cvCreateMemStorage(0);
 	pCascade = (CvHaarClassifierCascade *)cvLoad
@@ -63,26 +55,23 @@ int main(int argc, char** argv)
 
 	// Show the image captured from the camera in the window and repeat
 	while(1) {
-		// get frame per second
+
+		// mengambil setiap frame dari video capture
 		frame = cvQueryFrame( capture );
 
 		// detect faces in image
 		face = cvHaarDetectObjects
 			(frame, pCascade, pStorage,
-			1.2,						// increase search scale by 10% each pass
+			1.5,						// increase search scale by 10% each pass
 			3,							// merge groups of three detections
 			CV_HAAR_DO_CANNY_PRUNING,	// skip regions unlikely to contain a face
-			cvSize(50,50));				// smallest size face to detect = 40x40
-		
-		// run void displaydetections
-		displayDetections(frame, face);
-		
-		// show processed image
-		cvShowImage(DISPLAY_WINDOW, frame);
-		
-		// 27 = esc button
-		if ( (cvWaitKey(10) & 255) == 27 ) break;
+			cvSize(100,100));			// smallest size face to detect = 40x40
 
+		detect_face(frame, face);
+
+		cvShowImage(DISPLAY_WINDOW, frame);
+
+		if ( (cvWaitKey(10) & 255) == 27 ) break;
 	}
 
 	// clean up and release resources
@@ -90,14 +79,16 @@ int main(int argc, char** argv)
 	if(pCascade) cvReleaseHaarClassifierCascade(&pCascade);
 	if(pStorage) cvReleaseMemStorage(&pStorage);
 	
+	cvDestroyWindow("show thumb");
 	cvDestroyWindow(DISPLAY_WINDOW);
 	return 0;
 }
 
 
-void displayDetections(IplImage * frame, CvSeq * face)
+void detect_face(IplImage * frame, CvSeq * face)
 {
-	int i, j;
+	int i;
+	IplImage * src = cvLoadImage("C:/testimage/test.jpg");
 
 	// draw a rectangular outline around each detection
 	for(i=0;i<(face? face->total:0); i++ )
@@ -106,44 +97,74 @@ void displayDetections(IplImage * frame, CvSeq * face)
 		r = (CvRect*)cvGetSeqElem(face, i);
 		
 		CvPoint pt1 = { r->x, r->y };
-		CvPoint pt2 = { r->x + r->width, r->y + r->height };
+		// CvPoint pt2 = { r->x + 120, r->y + 120 };
+		CvPoint pt2 = { r->x + r->height, r->y + r->height };
 		cvRectangle(frame, pt1, pt2, CV_RGB(0,255,0), 3, 4, 0);
 		
-		/*
-		 * sintax untuk menghitung jumlah wajah
-		 */
-		 
-		 
-		 
-		// end menghitung wajah
-		
-		CvFont font;
-		cvInitFont(&font, CV_FONT_HERSHEY_COMPLEX, 1.0, 1.0, 0, 1, CV_AA);
-		cvPutText(frame, "Keur Ngaca Lur! ", pt1, &font, cvScalar(255, 255, 255, 0));
-		
-		// masih error ganti wajah
-		//overlayImages(pt1, frame);
+		//for(j=0;j<(face? face->total:0); j++ )
+		//{
 
+		//	CvRect recta = cvRect(r->x, r->y, 120, 120);
+		//	
+		//	cvSetImageROI(frame, recta );
+
+		//	IplImage * gray = cvCreateImage(cvGetSize(frame), frame->depth, 1);
+		//	cvCvtColor(frame, gray, CV_RGB2GRAY);
+		//	//cvSaveImage("C:/test.jpg", gray);
+
+		//	cvShowImage("show thumb", gray);
+
+		//	cvResetImageROI(frame);
+
+		//	cvReleaseImage(&gray);
+
+		//}
+
+		
+		//overlayImages(r, frame);
 	}
-	
-	// keluarkan dan tampilkan jumlah wajah
 
-		
-	
+	// Mengitung Framerate
+	num_frames++;
+	elapsed = clock() - last_time;
+	int fps = 0;
+	fps = floor(num_frames / (float)(1 + (float)elapsed / (float)CLOCKS_PER_SEC));
+	num_frames = 0;
+	last_time = clock() + 1 * CLOCKS_PER_SEC;
+
+	CvFont font;
+
+	// menampilkan jumlah fps
+	char fpsnum[16];
+	char myNum2 = fps;
+	itoa (myNum2,fpsnum,10);
+	cvInitFont(&font, CV_FONT_HERSHEY_COMPLEX, 0.5, 1.0, 0, 1, CV_AA);
+	cvPutText(frame,"FPS",cvPoint(550,50), &font, cvScalar(0, 255, 0, 0));
+	cvPutText(frame,fpsnum,cvPoint(500,50), &font, cvScalar(0, 255, 0, 0));
+
+	// menampilkan jumlah wajah terdeteksi
+	char txt[16];
+	char myNum = i;
+	itoa (i,txt,10);
+	cvInitFont(&font, CV_FONT_HERSHEY_COMPLEX, 0.5, 1.0, 0, 1, CV_AA);
+	cvPutText(frame,"Jumlah Bengeut: ",cvPoint(2,460), &font, cvScalar(0, 255, 0, 0));
+	cvPutText(frame,txt,cvPoint(230,460), &font, cvScalar(0, 255, 0, 0));
+
 }
 
-//ini buat ngassih gambar "iron man" tapi masih terjadi error nih
-void overlayImages(CvPoint point, IplImage * frame)
+// Fitur mengganti wajah
+void overlayImages(CvRect * point, IplImage * frame)
 {
 		/* define rectangle for ROI */
-		//rect = cvRect(point.x, point.y,marker->width, marker->height);
+		rect = cvRect(point->x, point->y,marker->width, marker->height);
 
 		/* sets Region of Interest */
-		//cvSetImageROI(frame, rect);
+		cvSetImageROI(frame, rect);
 
 		/* Add masked images */
-		//cvAddWeighted(marker,1, frame, 0, 0, frame);
+		cvAddWeighted(marker,1, frame, 0, 0, frame);
 
 		/* always reset the region of interest */
-		//cvResetImageROI(frame);
+		cvResetImageROI(frame);
+		
 }
