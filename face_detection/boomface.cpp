@@ -3,11 +3,10 @@
 
 #include <stdio.h>
 #include <iostream>
-#include <ctime>	// library untuk mengukur waktu
 
 // *** Change this to your install location! ***
 // *********************************************
-#define OPENCV_ROOT  "C:/opencv"
+#define OPENCV_ROOT  "C:/OpenCV/opencv"
 // *********************************************
 
 using namespace std;
@@ -56,8 +55,6 @@ int main(int argc, char** argv)
 
 	// Show the image captured from the camera in the window and repeat
 	while(1) {
-		// mengambil waktu saat algoritma utama mulai dijalankan
-		clock_t start = clock();
 
 		// mengambil setiap frame dari video capture
 		frame = cvQueryFrame( capture );
