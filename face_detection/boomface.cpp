@@ -7,7 +7,10 @@
 
 // *** Change this to your install location! ***
 // *********************************************
-#define OPENCV_ROOT  "C:/opencv"
+
+//#define OPENCV_ROOT  "C:/opencv"
+#define OPENCV_ROOT  "C:/OpenCV/opencv"
+
 // *********************************************
 
 using namespace std;
@@ -75,9 +78,15 @@ int main(int argc, char** argv)
 
 		cvShowImage(DISPLAY_WINDOW, frame);
 
-		system("cls");
+		//system("cls");
 		//menampilkan waktu komputasi
 		cout << "waktu komputasi: " << (clock() - start) / (double) CLOCKS_PER_SEC << "\t ms per proses" << endl;
+
+		IplImage * hist = cvCreateImage(cvGetSize(frame), 8, 1);
+		cvCvtColor( frame, hist, CV_BGR2GRAY );
+		cvEqualizeHist(hist, hist);
+
+		cvShowImage("hist",hist);
 
 		if ( (cvWaitKey(10) & 255) == 27 ) break;
 	}
@@ -89,6 +98,7 @@ int main(int argc, char** argv)
 	
 	cvDestroyWindow("show thumb");
 	cvDestroyWindow(DISPLAY_WINDOW);
+	cvDestroyWindow("hist");
 	return 0;
 }
 
