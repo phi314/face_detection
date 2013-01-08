@@ -3,6 +3,7 @@
 
 #include <stdio.h>
 #include <iostream>
+#include <ctime>
 
 // *** Change this to your install location! ***
 // *********************************************
@@ -22,6 +23,7 @@ CvRect rect;
 double elapsed;
 int last_time;
 int num_frames;
+clock_t start;	// variabel waktu
 
 CvHaarClassifierCascade * pCascade = 0;		// the face detector
 CvMemStorage * pStorage = 0;				// memory for detector to use
@@ -55,6 +57,8 @@ int main(int argc, char** argv)
 
 	// Show the image captured from the camera in the window and repeat
 	while(1) {
+		// mengambil waktu saat aloritma utama mulai dijalankan
+		start = clock();
 
 		// mengambil setiap frame dari video capture
 		frame = cvQueryFrame( capture );
