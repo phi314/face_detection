@@ -3,11 +3,11 @@
 
 #include <stdio.h>
 #include <iostream>
-#include <ctime>
+#include <ctime> // library untuk waktu
 
 // *** Change this to your install location! ***
 // *********************************************
-#define OPENCV_ROOT  "C:/OpenCV/opencv"
+#define OPENCV_ROOT  "C:/opencv"
 // *********************************************
 
 using namespace std;
@@ -74,6 +74,10 @@ int main(int argc, char** argv)
 		detect_face(frame, face);
 
 		cvShowImage(DISPLAY_WINDOW, frame);
+
+		system("cls");
+		//menampilkan waktu komputasi
+		cout << "waktu komputasi: " << (clock() - start) / (double) CLOCKS_PER_SEC << "\t ms per proses" << endl;
 
 		if ( (cvWaitKey(10) & 255) == 27 ) break;
 	}
