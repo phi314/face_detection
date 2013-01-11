@@ -122,19 +122,18 @@ void detect_face(IplImage * frame, CvSeq * face)
 		//for(j=0;j<(face? face->total:0); j++ )
 		//{
 
-		//	CvRect recta = cvRect(r->x, r->y, 120, 120);
-		//	
-		//	cvSetImageROI(frame, recta );
+		CvRect recta = cvRect(r->x, r->y, 120, 120);
+			
+		cvSetImageROI(frame, recta );
 
-		//	IplImage * gray = cvCreateImage(cvGetSize(frame), frame->depth, 1);
-		//	cvCvtColor(frame, gray, CV_RGB2GRAY);
-		//	//cvSaveImage("C:/test.jpg", gray);
+		IplImage * gray = cvCreateImage(cvGetSize(frame), frame->depth, 1);
+		cvCvtColor(frame, gray, CV_RGB2GRAY);
+		cvSaveImage("C:/test.jpg", gray);
 
-		//	cvShowImage("show thumb", gray);
+		cvShowImage("show thumb", gray);
 
-		//	cvResetImageROI(frame);
-
-		//	cvReleaseImage(&gray);
+		cvResetImageROI(frame);
+		cvReleaseImage(&gray);
 
 		//}
 
