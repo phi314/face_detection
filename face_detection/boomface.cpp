@@ -57,6 +57,9 @@ int main(int argc, char** argv)
 
 	// create a window to display detected faces
 	cvNamedWindow(DISPLAY_WINDOW, CV_WINDOW_AUTOSIZE);
+	
+	//menampilkan tabel komputasi
+	printf( "memori(bit)\twaktu(s)\n");
 
 	// Show the image captured from the camera in the window and repeat
 	while(1) {
@@ -78,9 +81,8 @@ int main(int argc, char** argv)
 
 		cvShowImage(DISPLAY_WINDOW, frame);
 
-		//system("cls");
 		//menampilkan waktu komputasi
-		cout << "waktu komputasi: " << (clock() - start) / (double) CLOCKS_PER_SEC << "\t ms per proses" << endl;
+		printf( "%d\t\t%f\n", (face->storage->block_size - face->storage->free_space) /16 , (clock() - start) / (double) CLOCKS_PER_SEC );
 
 		IplImage * hist = cvCreateImage(cvGetSize(frame), 8, 1);
 		cvCvtColor( frame, hist, CV_BGR2GRAY );
@@ -164,7 +166,7 @@ void detect_face(IplImage * frame, CvSeq * face)
 	char myNum = i;
 	itoa (i,txt,10);
 	cvInitFont(&font, CV_FONT_HERSHEY_COMPLEX, 0.5, 1.0, 0, 1, CV_AA);
-	cvPutText(frame,"Jumlah Bengeut: ",cvPoint(2,460), &font, cvScalar(0, 255, 0, 0));
+	cvPutText(frame,"Jumlah Wajah: ",cvPoint(2,460), &font, cvScalar(0, 255, 0, 0));
 	cvPutText(frame,txt,cvPoint(230,460), &font, cvScalar(0, 255, 0, 0));
 
 }
