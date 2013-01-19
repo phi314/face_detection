@@ -177,11 +177,5 @@ void overlayImages(CvRect * point, IplImage * frame)
 
 		/* sets Region of Interest */
 		cvSetImageROI(frame, rect);
-
-		/* Add masked images */
-		cvAddWeighted(marker,1, frame, 0, 0, frame);
-
-		/* always reset the region of interest */
-		cvResetImageROI(frame);
 		
 }
