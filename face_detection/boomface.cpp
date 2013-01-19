@@ -169,13 +169,3 @@ void detect_face(IplImage * frame, CvSeq * face)
 
 }
 
-// Fitur mengganti wajah
-void overlayImages(CvRect * point, IplImage * frame)
-{
-		/* define rectangle for ROI */
-		rect = cvRect(point->x, point->y,marker->width, marker->height);
-
-		/* sets Region of Interest */
-		cvSetImageROI(frame, rect);
-		
-}
